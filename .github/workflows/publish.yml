@@ -1,0 +1,54 @@
+name: publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: run tests
+        run: |
+          uv venv
+          uv pip install -e ".[dev]"
+          uv run pytest
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: check tag matches package version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          ver=$(grep -oP '(?<=__version__ = ")[^"]+' src/py3spread/_version.py)
+          if [ "$tag" != "$ver" ]; then
+            echo "release tag v$tag does not match package version $ver"
+            exit 1
+          fi
+      - name: build sdist and wheel
+        run: uv build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/py3spread
+    permissions:
+      # required for pypi trusted publishing (oidc)
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
