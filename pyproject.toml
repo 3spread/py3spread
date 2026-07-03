@@ -1,12 +1,11 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [project]
 name = "py3spread"
-dynamic = ["version"]
+dynamic = ["version", "readme"]
 description = "Python client for the 3spread API (machine-readable SEC filing data)"
-readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "3spread" }]
@@ -36,6 +35,22 @@ dev = ["pytest>=7"]
 
 [tool.hatch.version]
 path = "src/py3spread/_version.py"
+
+# the repo readme uses relative links so github renders them on any branch;
+# rewrite them to absolute urls for the pypi page at build time
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '!\[([^\]]*)\]\(examples/'
+replacement = '![\1](https://raw.githubusercontent.com/3spread/py3spread/main/examples/'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(examples/'
+replacement = '](https://github.com/3spread/py3spread/blob/main/examples/'
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/py3spread"]
