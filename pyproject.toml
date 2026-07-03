@@ -27,11 +27,16 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://3spread.com"
-Documentation = "https://3spread.com/docs"
+Documentation = "https://3spread.github.io/py3spread/"
+"API Reference" = "https://3spread.com/docs"
 Repository = "https://github.com/3spread/py3spread"
 
 [project.optional-dependencies]
 dev = ["pytest>=7"]
+docs = [
+    "mkdocs-material>=9",
+    "mkdocstrings[python]>=0.24",
+]
 
 [tool.hatch.version]
 path = "src/py3spread/_version.py"
