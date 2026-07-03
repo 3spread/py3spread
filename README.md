@@ -4,6 +4,10 @@ Python client for the [3spread](https://3spread.com) API: machine-readable SEC
 filing data (insider transactions, 13F holdings, fund portfolios, beneficial
 ownership, and more).
 
+**API keys are always free for individuals.** Sign up at
+[3spread.com/auth/signup](https://3spread.com/auth/signup) and you get full
+access to every dataset at 300 requests/minute.
+
 ## Install
 
 ```bash
@@ -15,7 +19,9 @@ Requires Python 3.10+.
 ## Public beta
 
 3spread is in [public beta](https://3spread.com/beta): live, but still
-rounding off the rough edges. Expect some coverage gaps across filing types,
+rounding off the rough edges. History currently reaches back to filings
+accepted in early 2021, with deeper coverage expanding per the roadmap.
+Expect some coverage gaps across filing types,
 fields, and history windows, the occasional filing that parses wrong, and
 endpoints that may evolve with feedback. The
 [roadmap](https://3spread.com/roadmap) shows what's live now and what's
@@ -25,9 +31,8 @@ gap, check what's actually populated via the coverage endpoints
 
 ## Quickstart
 
-Sign up at [3spread.com/auth/signup](https://3spread.com/auth/signup) for an
-API key. The Community tier gives full API access and is free, always, in
-beta and after. Then:
+API keys are free, always, in beta and after. Grab one at
+[3spread.com/auth/signup](https://3spread.com/auth/signup), then:
 
 ```python
 from py3spread import Client
@@ -40,6 +45,77 @@ for filing in page["data"]:
 ```
 
 You can also pass the key directly with `Client(api_key="...")`.
+
+## What the data can do
+
+A few results straight out of the [examples](https://github.com/3spread/py3spread/tree/main/examples/), every one of
+them built with a Community API key.
+
+### Which managers actually differ from the index
+
+Ten managers' latest 13F portfolios, pairwise overlap, clustered. The
+custodian complex holds the market; Berkshire sits alone in its corner.
+
+![manager similarity heatmap](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/manager_similarity.png)
+
+```python
+weights = portfolio.groupby("cusip")["value_usd"].sum() / total
+common = a.index.intersection(b.index)
+overlap = np.minimum(a[common], b[common]).sum()
+```
+
+From [`institutional_13f.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/institutional_13f.ipynb).
+The two-manager version lives in
+[`fund_overlap.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/fund_overlap.ipynb).
+
+### A price chart with no market data
+
+Every insider transaction reports its execution price. Two years of Form 4
+prices trace the stock, no exchange feed involved.
+
+![price path from insider filings](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/form4_price_chart.png)
+
+```python
+for txn in client.insiders.iter_transactions(
+    issuer_ticker="AAPL", transaction_kind="nonderiv",
+    transaction_start="2024-07-01", transaction_end="2026-07-01",
+):
+    plot(txn["transaction_date"], txn["transaction_price_per_share"])
+```
+
+From [`form4_price_chart.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/form4_price_chart.ipynb).
+
+### The Fed cycle, out of money market filings
+
+Median prime fund yield with a 10th-90th percentile band, built from the
+seven day gross yield every fund reports monthly on Form N-MFP.
+
+![rate cycle from filings](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/rate_cycle.png)
+
+```python
+for filing in client.money_market_funds.iter(cik=registrant, ...):
+    panel.append((filing["period_of_report"], filing["seven_day_gross_yield"]))
+```
+
+From [`rate_cycle.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/rate_cycle.ipynb), which also
+runs per-fund pass-through regressions.
+
+### The private capital map
+
+Form D exempt offerings by industry and month. 319K+ filings almost nobody
+parses.
+
+![form d industry heatmap](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/form_d_heatmap.png)
+
+```python
+offerings = client.private_offerings.iter(
+    accepted_start="2026-01-01", accepted_end="2026-01-31")
+```
+
+From [`form_d_heatmap.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/form_d_heatmap.ipynb).
+
+More in [`examples/`](https://github.com/3spread/py3spread/tree/main/examples/): an activist 13D radar, insider dossiers,
+money market stress ranking, a live filing tape, and a dozen others.
 
 ## Datasets
 
@@ -55,7 +131,7 @@ Each filing family is a resource on the client:
 | `client.beneficial_ownership` | Schedule 13D / 13G reports |
 | `client.proposed_sales` | Form 144 proposed sales |
 | `client.fund_census` | Form N-CEN census reports |
-| `client.money_market_funds` | Form N-MFP2 reports and NAV series |
+| `client.money_market_funds` | Form N-MFP2/N-MFP3 reports and NAV series |
 | `client.proxy_votes` | Form N-PX voting records |
 | `client.reg_a_offerings` | Regulation A+ offerings |
 | `client.registration_statements` | Registration statements and text sections (still being populated) |
