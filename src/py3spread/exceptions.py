@@ -45,7 +45,7 @@ class AuthenticationError(APIError):
 
 
 class RateLimitError(APIError):
-    """429: rate limit exceeded for your tier."""
+    """429: rate limit exceeded for your API key."""
 
 
 class BadRequestError(APIError):
