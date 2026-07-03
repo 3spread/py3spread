@@ -48,7 +48,7 @@ You can also pass the key directly with `Client(api_key="...")`.
 
 ## What the data can do
 
-A few results straight out of the [examples](https://github.com/3spread/py3spread/tree/main/examples/), every one of
+A few results straight out of the [examples](examples/), every one of
 them built with a Community API key.
 
 ### Which managers actually differ from the index
@@ -56,7 +56,7 @@ them built with a Community API key.
 Ten managers' latest 13F portfolios, pairwise overlap, clustered. The
 custodian complex holds the market; Berkshire sits alone in its corner.
 
-![manager similarity heatmap](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/manager_similarity.png)
+![manager similarity heatmap](examples/assets/manager_similarity.png)
 
 ```python
 weights = portfolio.groupby("cusip")["value_usd"].sum() / total
@@ -64,16 +64,16 @@ common = a.index.intersection(b.index)
 overlap = np.minimum(a[common], b[common]).sum()
 ```
 
-From [`institutional_13f.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/institutional_13f.ipynb).
+From [`institutional_13f.ipynb`](examples/notebooks/institutional_13f.ipynb).
 The two-manager version lives in
-[`fund_overlap.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/fund_overlap.ipynb).
+[`fund_overlap.ipynb`](examples/notebooks/fund_overlap.ipynb).
 
 ### A price chart with no market data
 
 Every insider transaction reports its execution price. Two years of Form 4
 prices trace the stock, no exchange feed involved.
 
-![price path from insider filings](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/form4_price_chart.png)
+![price path from insider filings](examples/assets/form4_price_chart.png)
 
 ```python
 for txn in client.insiders.iter_transactions(
@@ -83,21 +83,21 @@ for txn in client.insiders.iter_transactions(
     plot(txn["transaction_date"], txn["transaction_price_per_share"])
 ```
 
-From [`form4_price_chart.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/form4_price_chart.ipynb).
+From [`form4_price_chart.ipynb`](examples/notebooks/form4_price_chart.ipynb).
 
 ### The Fed cycle, out of money market filings
 
 Median prime fund yield with a 10th-90th percentile band, built from the
 seven day gross yield every fund reports monthly on Form N-MFP.
 
-![rate cycle from filings](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/rate_cycle.png)
+![rate cycle from filings](examples/assets/rate_cycle.png)
 
 ```python
 for filing in client.money_market_funds.iter(cik=registrant, ...):
     panel.append((filing["period_of_report"], filing["seven_day_gross_yield"]))
 ```
 
-From [`rate_cycle.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/rate_cycle.ipynb), which also
+From [`rate_cycle.ipynb`](examples/notebooks/rate_cycle.ipynb), which also
 runs per-fund pass-through regressions.
 
 ### The private capital map
@@ -105,16 +105,16 @@ runs per-fund pass-through regressions.
 Form D exempt offerings by industry and month. 319K+ filings almost nobody
 parses.
 
-![form d industry heatmap](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/form_d_heatmap.png)
+![form d industry heatmap](examples/assets/form_d_heatmap.png)
 
 ```python
 offerings = client.private_offerings.iter(
     accepted_start="2026-01-01", accepted_end="2026-01-31")
 ```
 
-From [`form_d_heatmap.ipynb`](https://github.com/3spread/py3spread/blob/main/examples/notebooks/form_d_heatmap.ipynb).
+From [`form_d_heatmap.ipynb`](examples/notebooks/form_d_heatmap.ipynb).
 
-More in [`examples/`](https://github.com/3spread/py3spread/tree/main/examples/): an activist 13D radar, insider dossiers,
+More in [`examples/`](examples/): an activist 13D radar, insider dossiers,
 money market stress ranking, a live filing tape, and a dozen others.
 
 ## Datasets
