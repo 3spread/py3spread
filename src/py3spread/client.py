@@ -53,6 +53,10 @@ class Client:
 
     Reads the API key from the THREESPREAD_API_KEY environment variable
     if not passed explicitly. Get a key at https://3spread.com/auth/signup.
+
+    Each filing family is an attribute (`filings`, `insiders`,
+    `institutional_holdings`, `beneficial_ownership`, ...) carrying that
+    family's list/iter/get methods.
     """
 
     def __init__(

@@ -1,0 +1,54 @@
+site_name: py3spread
+site_description: Python client for the 3spread API (machine-readable SEC filing data)
+site_url: https://3spread.github.io/py3spread/
+repo_url: https://github.com/3spread/py3spread
+repo_name: 3spread/py3spread
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      toggle:
+        icon: material/weather-night
+        name: dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      toggle:
+        icon: material/weather-sunny
+        name: light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_heading: true
+            members_order: source
+            docstring_style: google
+            merge_init_into_class: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+
+nav:
+  - Home: index.md
+  - Guides:
+      - Authentication: guides/authentication.md
+      - Pagination: guides/pagination.md
+      - Errors and retries: guides/errors.md
+      - Data conventions: guides/data-conventions.md
+      - Syncing a downstream store: guides/sync.md
+  - Reference:
+      - Client: reference/client.md
+      - Resources: reference/resources.md
+      - Exceptions: reference/exceptions.md
+  - Examples: examples.md

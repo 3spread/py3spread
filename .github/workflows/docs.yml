@@ -1,0 +1,40 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+      - mkdocs.yml
+      - src/**
+      - .github/workflows/docs.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: build the site
+        run: |
+          uv venv
+          uv pip install -e ".[docs]"
+          uv run mkdocs build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      # required for github pages deployment
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
