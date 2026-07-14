@@ -29,9 +29,9 @@ and `Authorization: Bearer`, but the client handles this for you.
 
 ## Rate limits
 
-Community keys allow 300 requests per minute. The client retries 429
-responses automatically with backoff; for long pulls that may saturate the
-window, raise the retry budget:
+Community keys allow 36,000 requests per hour (600 requests per minute).
+The client retries 429 responses automatically with backoff; for long
+pulls that may saturate the window, raise the retry budget:
 
 ```python
 client = Client(max_retries=8)
