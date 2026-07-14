@@ -8,9 +8,10 @@ ownership, and more).
 [Examples](examples/) ·
 [3spread API reference](https://3spread.com/docs)
 
-**API keys are always free for individuals.** Sign up at
-[3spread.com/auth/signup](https://3spread.com/auth/signup) and you get full
-access to every dataset at 300 requests/minute.
+**36,000 requests/hour, free.** API keys are always free for individuals:
+sign up at [3spread.com/auth/signup](https://3spread.com/auth/signup) and
+you get full access to every dataset at 36,000 requests/hour
+(600 requests/minute).
 
 ## Install
 
