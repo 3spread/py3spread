@@ -51,8 +51,19 @@ def _clean_params(params: dict[str, Any] | None) -> dict[str, Any]:
 class Client:
     """Client for the 3spread API.
 
-    Reads the API key from the THREESPREAD_API_KEY environment variable
-    if not passed explicitly. Get a key at https://3spread.com/auth/signup.
+    Takes either a long-lived API key or a short-lived OAuth access token:
+
+        Client(api_key="sk_live_...")     # sent as the `apikey` header
+        Client(access_token="eyJ...")     # sent as `Authorization: Bearer`
+
+    With neither, the API key is read from the THREESPREAD_API_KEY environment
+    variable. Get a key at https://3spread.com/auth/signup.
+
+    An access token is never read from the environment. OAuth tokens are
+    short-lived, so a token pinned into a process environment would be expired
+    for most of that process's life; the caller is expected to hold a fresh one
+    and build a Client with it. The token is bound at construction, so refreshing
+    means constructing a new Client rather than mutating this one.
 
     Each filing family is an attribute (`filings`, `insiders`,
     `institutional_holdings`, `beneficial_ownership`, ...) carrying that
@@ -63,24 +74,38 @@ class Client:
         self,
         api_key: str | None = None,
         *,
+        access_token: str | None = None,
         base_url: str = DEFAULT_BASE_URL,
         timeout: float = 30.0,
         max_retries: int = 3,
         transport: httpx.BaseTransport | None = None,
     ):
-        api_key = api_key or os.environ.get(ENV_API_KEY)
-        if not api_key:
+        # Explicit failure rather than a silent precedence rule: passing both is
+        # a caller bug, and guessing which one they meant hides it until a 401.
+        if api_key and access_token:
             raise ValueError(
-                "no API key given; pass api_key= or set the "
-                f"{ENV_API_KEY} environment variable"
+                "pass api_key= or access_token=, not both"
             )
+
+        if access_token:
+            auth_header = {"authorization": f"Bearer {access_token}"}
+        else:
+            api_key = api_key or os.environ.get(ENV_API_KEY)
+            if not api_key:
+                raise ValueError(
+                    "no credential given; pass api_key= or set the "
+                    f"{ENV_API_KEY} environment variable, or pass "
+                    "access_token= for an OAuth access token"
+                )
+            auth_header = {"apikey": api_key}
+
         self.max_retries = max_retries
         self._http = httpx.Client(
             base_url=base_url,
             timeout=timeout,
             transport=transport,
             headers={
-                "apikey": api_key,
+                **auth_header,
                 "user-agent": f"py3spread/{__version__}",
             },
         )

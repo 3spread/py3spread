@@ -1,8 +1,11 @@
 # Authentication
 
-Every data endpoint needs an API key. Keys are always free for individuals:
-sign up at [3spread.com/auth/signup](https://3spread.com/auth/signup) and
-provision one from your dashboard.
+Every data endpoint needs a credential. The client takes either a long-lived
+**API key** or a short-lived **OAuth access token**.
+
+API keys are always free for individuals: sign up at
+[3spread.com/auth/signup](https://3spread.com/auth/signup) and provision one
+from your dashboard.
 
 ## Giving the client your key
 
@@ -26,6 +29,31 @@ client = Client(api_key="your_key")
 
 The key is sent as the `apikey` header. The API also accepts `X-API-Key`
 and `Authorization: Bearer`, but the client handles this for you.
+
+## OAuth access tokens
+
+If you obtained a token through an OAuth flow rather than provisioning a key,
+pass it as `access_token`:
+
+```python
+client = Client(access_token="eyJ...")
+```
+
+It is sent as `Authorization: Bearer` and no `apikey` header is set. Passing
+both `api_key` and `access_token` raises `ValueError` — pick one.
+
+Unlike the API key, an access token is **never read from the environment**.
+Tokens are short-lived, so one pinned into a process environment would be
+expired for most of that process's life. The token is bound when the client is
+constructed, so refreshing means building a new client:
+
+```python
+def client_for(token: str) -> Client:
+    return Client(access_token=token)
+```
+
+Both credentials resolve to the same account and share one rate-limit budget,
+so moving between them does not give you a second quota.
 
 ## Rate limits
 
