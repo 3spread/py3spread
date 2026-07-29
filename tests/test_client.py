@@ -37,6 +37,52 @@ def test_missing_api_key_raises(monkeypatch):
         Client()
 
 
+def test_access_token_sent_as_bearer_and_no_apikey_header(monkeypatch):
+    # The gateway picks the auth plugin by header: an OAuth token has to arrive
+    # as Authorization, and a stale apikey header alongside it would be tried
+    # first by key-auth and fail.
+    monkeypatch.delenv(ENV_API_KEY, raising=False)
+    seen = {}
+
+    def handler(request):
+        seen["authorization"] = request.headers.get("authorization")
+        seen["apikey"] = request.headers.get("apikey")
+        return httpx.Response(200, json={"ok": True})
+
+    client = Client(access_token="eyJ-token", transport=httpx.MockTransport(handler))
+    assert client.request("/v1/health") == {"ok": True}
+    assert seen["authorization"] == "Bearer eyJ-token"
+    assert seen["apikey"] is None
+
+
+def test_access_token_beats_env_api_key(monkeypatch):
+    # An explicit token is a deliberate act; an ambient env key must not win.
+    monkeypatch.setenv(ENV_API_KEY, "env-key")
+
+    def handler(request):
+        assert request.headers.get("authorization") == "Bearer tok"
+        assert request.headers.get("apikey") is None
+        return httpx.Response(200, json={})
+
+    client = Client(access_token="tok", transport=httpx.MockTransport(handler))
+    client.request("/v1/health")
+
+
+def test_api_key_and_access_token_together_raises(monkeypatch):
+    monkeypatch.delenv(ENV_API_KEY, raising=False)
+    with pytest.raises(ValueError, match="not both"):
+        Client("sk_live_x", access_token="eyJ-token")
+
+
+def test_access_token_is_not_read_from_env(monkeypatch):
+    # Deliberate: OAuth tokens are short-lived, so there is no env fallback for
+    # them the way there is for the long-lived API key.
+    monkeypatch.delenv(ENV_API_KEY, raising=False)
+    monkeypatch.setenv("THREESPREAD_ACCESS_TOKEN", "eyJ-from-env")
+    with pytest.raises(ValueError):
+        Client()
+
+
 def test_none_params_dropped_and_ticker_upcased(make_client):
     seen = {}
 

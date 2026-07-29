@@ -57,13 +57,25 @@ class Changes(Resource):
         since: str | None = None,
         until: str | None = None,
         limit: int | None = None,
+        offset: int | None = None,
         order: str | None = None,
         cursor: str | None = None,
     ) -> dict[str, Any]:
-        """One page of change events for a family (see FAMILIES)."""
+        """One page of change events for a family (see FAMILIES).
+
+        The changefeed is cursor-walked (see iter()); offset is the spec's
+        alternate paginator on /v1/changes/{family} and is accepted here for
+        completeness (omitted from the query when None)."""
         return self._get(
             f"/v1/changes/{family}",
-            dict(since=since, until=until, limit=limit, order=order, cursor=cursor),
+            dict(
+                since=since,
+                until=until,
+                limit=limit,
+                offset=offset,
+                order=order,
+                cursor=cursor,
+            ),
         )
 
     def iter(self, family: str, **filters: Any) -> Iterator[dict[str, Any]]:

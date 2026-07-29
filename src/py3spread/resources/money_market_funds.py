@@ -110,26 +110,152 @@ class MoneyMarketFunds(Resource):
         """Iterate securities across pages. Same filters as securities()."""
         return self._iter_offset(f"{PATH}/securities", filters)
 
-    def series_nav(self, **kwargs: Any) -> dict[str, Any]:
-        """Series-level NAV series. Accepts registrant_cik, series_id, filing_id,
-        date_start, date_end, granularity, limit, offset, sort, order."""
-        return self._series(f"{PATH}/series-nav", kwargs)
+    def series_nav(
+        self,
+        *,
+        registrant_cik: str | None = None,
+        series_id: str | None = None,
+        filing_id: str | None = None,
+        date_start: str | None = None,
+        date_end: str | None = None,
+        granularity: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        sort: str | None = None,
+        order: str | None = None,
+    ) -> dict[str, Any]:
+        """Series-level NAV series. No classes_id — that is class-level only."""
+        return self._series(
+            f"{PATH}/series-nav",
+            dict(
+                registrant_cik=registrant_cik,
+                series_id=series_id,
+                filing_id=filing_id,
+                date_start=date_start,
+                date_end=date_end,
+                granularity=granularity,
+                limit=limit,
+                offset=offset,
+                sort=sort,
+                order=order,
+            ),
+        )
 
-    def liquid_assets(self, **kwargs: Any) -> dict[str, Any]:
+    def liquid_assets(
+        self,
+        *,
+        registrant_cik: str | None = None,
+        series_id: str | None = None,
+        filing_id: str | None = None,
+        date_start: str | None = None,
+        date_end: str | None = None,
+        granularity: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        sort: str | None = None,
+        order: str | None = None,
+    ) -> dict[str, Any]:
         """Series-level liquid-assets series. Same filters as series_nav()."""
-        return self._series(f"{PATH}/liquid-assets", kwargs)
+        return self._series(
+            f"{PATH}/liquid-assets",
+            dict(
+                registrant_cik=registrant_cik,
+                series_id=series_id,
+                filing_id=filing_id,
+                date_start=date_start,
+                date_end=date_end,
+                granularity=granularity,
+                limit=limit,
+                offset=offset,
+                sort=sort,
+                order=order,
+            ),
+        )
 
-    def class_nav(self, **kwargs: Any) -> dict[str, Any]:
+    def class_nav(
+        self,
+        *,
+        registrant_cik: str | None = None,
+        series_id: str | None = None,
+        classes_id: str | None = None,
+        filing_id: str | None = None,
+        date_start: str | None = None,
+        date_end: str | None = None,
+        granularity: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        sort: str | None = None,
+        order: str | None = None,
+    ) -> dict[str, Any]:
         """Class-level NAV series. Same filters as series_nav() plus classes_id."""
-        return self._series(f"{PATH}/class-nav", kwargs)
+        return self._series(
+            f"{PATH}/class-nav",
+            dict(
+                registrant_cik=registrant_cik,
+                series_id=series_id,
+                classes_id=classes_id,
+                filing_id=filing_id,
+                date_start=date_start,
+                date_end=date_end,
+                granularity=granularity,
+                limit=limit,
+                offset=offset,
+                sort=sort,
+                order=order,
+            ),
+        )
 
-    def class_flows(self, **kwargs: Any) -> dict[str, Any]:
+    def class_flows(
+        self,
+        *,
+        registrant_cik: str | None = None,
+        series_id: str | None = None,
+        classes_id: str | None = None,
+        filing_id: str | None = None,
+        date_start: str | None = None,
+        date_end: str | None = None,
+        granularity: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        sort: str | None = None,
+        order: str | None = None,
+    ) -> dict[str, Any]:
         """Class-level subscriptions/redemptions series. Same filters as class_nav()."""
-        return self._series(f"{PATH}/class-flows", kwargs)
+        return self._series(
+            f"{PATH}/class-flows",
+            dict(
+                registrant_cik=registrant_cik,
+                series_id=series_id,
+                classes_id=classes_id,
+                filing_id=filing_id,
+                date_start=date_start,
+                date_end=date_end,
+                granularity=granularity,
+                limit=limit,
+                offset=offset,
+                sort=sort,
+                order=order,
+            ),
+        )
 
-    def entities(self, **kwargs: Any) -> dict[str, Any]:
+    def entities(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int | None = None,
+        search: str | None = None,
+        sort: str | None = None,
+        order: str | None = None,
+    ) -> dict[str, Any]:
         """Registrant rollup. Accepts limit, offset, search, sort, order."""
-        return self._entities(f"{PATH}/entities", **kwargs)
+        return self._entities(
+            f"{PATH}/entities",
+            limit=limit,
+            offset=offset,
+            search=search,
+            sort=sort,
+            order=order,
+        )
 
     _SERIES_PARAMS = frozenset(
         {

@@ -49,7 +49,9 @@ for filing in page["data"]:
     print(filing["form_type"], filing["accepted_time"], filing["source_url"])
 ```
 
-You can also pass the key directly with `Client(api_key="...")`.
+You can also pass the key directly with `Client(api_key="...")`, or use an OAuth
+access token with `Client(access_token="...")` — see the
+[authentication guide](docs/guides/authentication.md).
 
 ## What the data can do
 
