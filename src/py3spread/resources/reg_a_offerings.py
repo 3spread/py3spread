@@ -57,6 +57,21 @@ class RegAOfferings(Resource):
         """Full detail for one Reg A+ filing."""
         return self._get(f"{PATH}/{filing_id}")
 
-    def entities(self, **kwargs: Any) -> dict[str, Any]:
+    def entities(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int | None = None,
+        search: str | None = None,
+        sort: str | None = None,
+        order: str | None = None,
+    ) -> dict[str, Any]:
         """Issuer rollup. Accepts limit, offset, search, sort, order."""
-        return self._entities(f"{PATH}/entities", **kwargs)
+        return self._entities(
+            f"{PATH}/entities",
+            limit=limit,
+            offset=offset,
+            search=search,
+            sort=sort,
+            order=order,
+        )
