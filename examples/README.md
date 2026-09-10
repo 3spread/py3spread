@@ -16,6 +16,7 @@ python examples/quickstart.py
 | `fund_portfolios.py` | Discover a fund family and pull its top N-PORT positions |
 | `beneficial_ownership.py` | Recent 13D/13G filers for a ticker |
 | `private_offerings.py` | Large recent Form D raises |
+| `financials.py` | Financial statements, metrics, ratios, and quant factors for a ticker |
 | `money_market_funds.py` | NAV time series for a money market fund |
 | `changefeed_sync.py` | Keep a local sqlite store in sync via the changefeed |
 | `coverage_and_freshness.py` | Check what data exists before querying |

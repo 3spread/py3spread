@@ -1,5 +1,6 @@
 from .beneficial_ownership import BeneficialOwnership
 from .filings import Filings
+from .financials import Financials
 from .fund_census import FundCensus
 from .fund_portfolios import FundPortfolios
 from .insiders import Insiders
@@ -19,6 +20,7 @@ __all__ = [
     "Coverage",
     "Entities",
     "Filings",
+    "Financials",
     "FundCensus",
     "FundPortfolios",
     "Insiders",

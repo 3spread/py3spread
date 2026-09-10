@@ -38,8 +38,9 @@ In rough order of complexity:
 
 Terminal-friendly versions of the common tasks: quickstart, insider
 activity, 13F holdings, fund portfolios, beneficial ownership, private
-offerings, money market funds, coverage checks, error handling, CSV
-export, a sqlite changefeed sync, and `sec_tape.py`, a live tape of
-filings as they are ingested. See the
+offerings, financials (statements, metrics, ratios, factors), money market
+funds, coverage checks, error handling, CSV export, a sqlite changefeed
+sync, and `sec_tape.py`, a live tape of filings as they are ingested. See
+the
 [examples README](https://github.com/3spread/py3spread/blob/main/examples/README.md)
 for the full index.

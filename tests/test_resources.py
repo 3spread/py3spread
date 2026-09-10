@@ -29,6 +29,11 @@ def test_paths(make_client):
     client.institutional_holdings.holdings(cusip="037833100")
     client.money_market_funds.series_nav(series_id="S000001")
     client.registration_statements.get_section("some-uuid")
+    client.financials.get("cik_accession")
+    client.financials.get_statement("block-uuid")
+    client.financials.ratio_names()
+    client.financials.factor_names()
+    client.financials.categories()
 
     paths = [r.url.path for r in seen]
     assert paths == [
@@ -47,6 +52,11 @@ def test_paths(make_client):
         "/v1/institutional-holdings/holdings",
         "/v1/money-market-funds/series-nav",
         "/v1/registration-statements/sections/some-uuid",
+        "/v1/financials/cik_accession",
+        "/v1/financials/statements/block-uuid",
+        "/v1/financials/ratios/names",
+        "/v1/financials/factors/names",
+        "/v1/financials/categories",
     ]
 
 
