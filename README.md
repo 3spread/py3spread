@@ -142,6 +142,7 @@ Each filing family is a resource on the client:
 | `client.proxy_votes` | Form N-PX voting records |
 | `client.reg_a_offerings` | Regulation A+ offerings |
 | `client.registration_statements` | Registration statements and text sections (still being populated) |
+| `client.financials` | Financial statements, metrics, ratios, and quant factors from 10-K/10-Q |
 | `client.entities` | Master CIK directory |
 | `client.coverage` | Coverage and freshness endpoints |
 | `client.changes` | Per-family changefeed |

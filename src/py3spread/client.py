@@ -15,6 +15,7 @@ from .resources import (
     Coverage,
     Entities,
     Filings,
+    Financials,
     FundCensus,
     FundPortfolios,
     Insiders,
@@ -111,6 +112,7 @@ class Client:
         )
 
         self.filings = Filings(self)
+        self.financials = Financials(self)
         self.insiders = Insiders(self)
         self.institutional_holdings = InstitutionalHoldings(self)
         self.private_offerings = PrivateOfferings(self)

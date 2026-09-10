@@ -53,6 +53,10 @@ Each filing family is an attribute on the client (`client.insiders`,
 
 ::: py3spread.resources.RegistrationStatements
 
+## Financials (10-K / 10-Q)
+
+::: py3spread.resources.Financials
+
 ## Entities
 
 ::: py3spread.resources.Entities
