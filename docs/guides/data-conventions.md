@@ -63,3 +63,52 @@ client.coverage.intake()            # ingestion histogram over time
 ```
 
 The examples make a habit of this, and it is worth copying.
+
+## Financials: version, spine, and scaling
+
+The `/financials` family has a few conventions that differ from the
+filing-family endpoints.
+
+### Version selection is required
+
+`statements()`, `metrics()`, `ratios()`, and `factors()` all require a
+`version` argument:
+
+- `"latest"` — newest report, restatements included
+- `"original"` — as first reported
+- `"as_of:YYYY-MM-DD"` — newest report known on that date (for backtests,
+  to avoid look-ahead bias)
+
+```python
+client.financials.metrics(ticker="AAPL", version="latest", category="total_revenue")
+client.financials.metrics(ticker="AAPL", version="as_of:2024-06-01", category="total_revenue")
+```
+
+### Spine decides the grid shape
+
+Each statement block carries a `spine` — one of `commercial_industrial`,
+`interest_spread`, `investment_company`, or `insurance` — that determines
+which line items the canonical grid contains. A single filer can be
+`interest_spread` on the balance sheet and `commercial_industrial` on the
+income statement; the spine is chosen per statement, not per company.
+
+### Ratios are percent-scaled, factors are raw fractions
+
+Ratio names ending in `_pct` (e.g. `roe_pct`) are percent-scaled: `27.7`
+means 27.7%. Factor `value` is a raw fraction: `1.574` means 157.4%.
+Some ratio and factor names overlap (e.g. `roe`) but use different
+definitions (ending vs average balances, total vs interest-bearing debt).
+Pick by definition, not by name.
+
+### Derived quarters
+
+`derived: true` marks a discrete quarter synthesized by differencing YTD
+blocks. Filter it out with `derived=False` if you only want filer-reported
+periods.
+
+### Values are raw as-filed magnitudes
+
+Metric `value` is the raw magnitude in the filing's `currency`, not
+scaled to thousands or millions. Parse with `decimal.Decimal` for exact
+arithmetic. A missing metric means "not reported," never zero — absent
+lines produce no row.

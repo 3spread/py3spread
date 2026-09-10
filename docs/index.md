@@ -35,6 +35,15 @@ for txn in client.insiders.iter_transactions(
     print(txn["filer_name"], txn["transaction_shares"], txn["transaction_price_per_share"])
 ```
 
+Financial statements, metrics, and ratios from 10-K / 10-Q filings:
+
+```python
+for m in client.financials.iter_metrics(
+    ticker="AAPL", version="latest", category="total_revenue", period_length=3,
+):
+    print(m["period_end"], m["fiscal_quarter"], m["value"])
+```
+
 ![manager similarity heatmap](https://raw.githubusercontent.com/3spread/py3spread/main/examples/assets/manager_similarity.png)
 
 That heatmap is 40 lines against this client; it lives in the
